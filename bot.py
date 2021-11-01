@@ -13,30 +13,29 @@ from PIL import ImageFont
 # These two dictionaries contain the words the bot "learns"
 firstWords={} # Contains the words that can start a sentence
 mainDict={} # Contains the rest of the words
-description = "A silly bot that pretends to learn to speak."
+description="A silly bot that pretends to learn to speak."
 bot=commands.Bot(command_prefix="~",description=description)
 # --- LOADING FILES ---
 # Attempt to open the file that contains the dictionaries
 try:
-    with open("dict.txt","rb") as f:
+    with open("dict.txt","rb")as f:
         mainDict,firstWords=pickle.load(f)
         print("Dict file loaded")
-
 # If file is not found, create a new one
 except FileNotFoundError:
-    with open("dict.txt","wb") as f:
+    with open("dict.txt","wb")as f:
         # Save the dictionaries into the newly created files
         pickle.dump([mainDict,firstWords],f)
         print("Dict file created")
 # Attempt to open the file that contains the censored words
 try:
-    with open("censor.txt","rb") as f:
+    with open("censor.txt","rb")as f:
         censor=pickle.load(f)
     print("Censor file loaded")
     print(censor)
 # If file is not found, create a new one
 except FileNotFoundError:
-    with open("censor.txt","wb") as f:
+    with open("censor.txt","wb")as f:
         # The list of words that will cause the bot to ignore the message, AKA the censored words
         # The censored words are (and should be) as follows:
         # @, to prevent tagging and therefore directly notifying users
@@ -45,7 +44,7 @@ except FileNotFoundError:
         # The bot's own commands, to keep the dictionary clean
         # Any words you wouldn't want the bot to say
         # IF YOU EDIT THE CENSOR LIST, REMEMBER TO DELETE THE OLD CENSOR.TXT AND RESTART THE BOT'S SCRIPT
-        censor = ["@","ENDSENTENCE","~debug_r","~speak"]
+        censor=["@","ENDSENTENCE","~debug_r","~speak"]
         pickle.dump(censor,f)
         print("Censor file created")
 # The event where someone in the discord server sends a message, allowing the bot to process it
@@ -70,7 +69,7 @@ async def on_message(message):
     messageWords=message.content.split()
     messageLength=len(messageWords)
     # If the first word doesn't have its own nested dictionary in the main dictionary, add one
-    if messageWords[0] not in tempDict:
+    if messageWords[0]not in tempDict:
         tempDict[messageWords[0]]={}
     # Update first word's appearance count
     try:
@@ -124,7 +123,7 @@ async def formulate():
     wordRandomizer=randint(1,sum(firstWords.values()))
     for key,value in firstWords.items():
         wordRandomizer-=value
-        if wordRandomizer<= 0:
+        if wordRandomizer<=0:
             # The word has been found and will be added to the sentence
             sentence+=key+" "
             previousWord=key
@@ -134,7 +133,7 @@ async def formulate():
     while looping:
         nestedDict=mainDict[previousWord] # Find the word's nested dictionary, which tells us which words can go next
         nestedDictValues=sum(nestedDict.values())
-        if nestedDictValues!= 1:
+        if nestedDictValues!=1:
             wordRandomizer=randint(1,nestedDictValues) # For choosing one of the words
             for key,value in nestedDict.items():
                 # For each next word candidate, their appearance count is reduced from the randomized number
@@ -187,13 +186,13 @@ async def gifspeed(ctx):
         page=requests.get(url2)
         f_ext=os.path.splitext(url2)[-1]
         f_name='images/gifspeed.gif'
-        with open(f_name,'wb') as f:
+        with open(f_name,'wb')as f:
             f.write(page.content)
     frames=[]
     imageObject=Image.open("images/gifspeed.gif")
     every_other_frame=0
     for frame in range(0,imageObject.n_frames):
-        if every_other_frame%4==0:
+        if !every_other_frame%2:
             imageObject.seek(frame)
             frames.append(imageObject.copy())
         every_other_frame+=1
